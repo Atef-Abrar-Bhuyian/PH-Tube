@@ -7,6 +7,8 @@ function getTime(time){
     return `${hour} hour ${minute} minute ${remainingSecond} seconds ago`
 }
 
+
+
 // create load categories
 const loadCategories = () => {
   fetch("https://openapi.programming-hero.com/api/phero-tube/categories")
@@ -23,8 +25,34 @@ const loadVideos = () => {
     .catch((error) => console.error(error));
 };
 
+const loadCategoriesVideo = (id) =>{
+    // alert(id);
+    // fetch
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => displayVideos(data.category))
+    .catch((error) => console.error(error));
+    
+}
+
 const displayVideos = (videos) => {
   const videoContainer = document.getElementById("videos");
+  videoContainer.innerHTML = "";
+
+  if(videos.length === 0){
+    videoContainer.classList.remove("grid");
+    videoContainer.innerHTML = `
+    <div class= "flex min-h-[300px] w-full flex-col gap-5 justify-center items-center"> 
+        <img src="assets/Icon.png" />
+    </div> 
+    `;
+    return;
+  }
+  else {
+    videoContainer.classList.add("grid");
+  }
+
+
   videos.forEach((video) => {
     const card = document.createElement("div");
     card.classList = "card card-compact bg-base-100 w-96 shadow-xl";
@@ -66,13 +94,14 @@ const displayCategories = (categories) => {
     console.log(item);
     // create a btn
 
-    const button = document.createElement("button");
-    button.classList = "btn";
-
-    button.innerText = item.category;
-
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = `
+    <button onclick="loadCategoriesVideo(${item.category_id})" class = "btn">
+    ${item.category}
+    </button>
+    `;
     // add btn to category container
-    categoryContainer.append(button);
+    categoryContainer.append(buttonContainer);
   });
 };
 
